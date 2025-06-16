@@ -41,6 +41,7 @@ class ArticuloController extends Controller
         return view('articulo.form', compact('categorias','subcategorias'));
     }
 
+
     public function store(Request $request)
     {
         $data = $request->validate([
@@ -51,7 +52,7 @@ class ArticuloController extends Controller
 
         $art = Articulo::create($data);
 
-        // Redirige al listado de la categoría por defecto
+        
         return redirect()
             ->route('articulo.filtrar.categoria', $art->codigo_categoria)
             ->with('success','Artículo creado correctamente');

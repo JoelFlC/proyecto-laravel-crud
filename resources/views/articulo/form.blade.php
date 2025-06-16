@@ -34,6 +34,7 @@
              required>
     </div>
 
+    {{-- SELECT de Categoría --}}
     <div class="mb-3">
       <label for="codigo_categoria" class="form-label">Categoría</label>
       <select name="codigo_categoria" id="codigo_categoria" class="form-select" required>
@@ -47,13 +48,15 @@
       </select>
     </div>
 
+    {{-- SELECT de Subcategoría --}}
     <div class="mb-3">
       <label for="codigo_subcategoria" class="form-label">Subcategoría</label>
       <select name="codigo_subcategoria" id="codigo_subcategoria" class="form-select" required>
         <option value="">-- Selecciona subcategoría --</option>
         @foreach($subcategorias as $sub)
           <option value="{{ $sub->codigo_subcategoria }}"
-            {{ old('codigo_subcategoria', $articulo->codigo_subcategoria ?? '') == $sub->codigo_subcategoria ? 'selected':'' }}>
+                  data-categoria="{{ $sub->codigo_categoria }}"
+                  {{ old('codigo_subcategoria', $articulo->codigo_subcategoria ?? '') == $sub->codigo_subcategoria ? 'selected':'' }}>
             {{ $sub->nombre_subcategoria }}
           </option>
         @endforeach
@@ -66,15 +69,34 @@
     <a href="{{ route('articulo.index') }}" class="btn btn-outline-light">Cancelar</a>
   </form>
 
+  {{-- Script para filtrar subcategorías por categoría --}}
   <script>
-  document.getElementById('formArticulo').addEventListener('submit', function(e){
-    const nombre = document.getElementById('nombre_articulo').value.trim();
-    if(!nombre
-      || !document.getElementById('codigo_categoria').value
-      || !document.getElementById('codigo_subcategoria').value){
-      alert('Todos los campos son obligatorios');
-      e.preventDefault();
-    }
-  });
+    document.addEventListener('DOMContentLoaded', function () {
+      const categoriaSelect = document.getElementById('codigo_categoria');
+      const subcategoriaSelect = document.getElementById('codigo_subcategoria');
+
+      function filtrarSubcategorias() {
+        const categoriaSeleccionada = categoriaSelect.value;
+
+        Array.from(subcategoriaSelect.options).forEach(opt => {
+          const pertenece = opt.getAttribute('data-categoria') === categoriaSeleccionada;
+          if (opt.value === "") {
+            opt.style.display = "block"; // Placeholder
+          } else {
+            opt.style.display = pertenece ? "block" : "none";
+          }
+        });
+
+        // Verifica si la opción seleccionada sigue válida
+        const selectedOption = subcategoriaSelect.options[subcategoriaSelect.selectedIndex];
+        if (selectedOption && selectedOption.style.display === "none") {
+          alert("La subcategoría seleccionada no pertenece a la categoría. Selecciona una válida.");
+          subcategoriaSelect.value = "";
+        }
+      }
+
+      categoriaSelect.addEventListener('change', filtrarSubcategorias);
+      filtrarSubcategorias(); // Ejecutar al cargar
+    });
   </script>
 @endsection

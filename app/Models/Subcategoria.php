@@ -11,6 +11,7 @@ class Subcategoria extends Model
     protected $primaryKey = 'codigo_subcategoria';
     public $timestamps = false;
     protected $fillable = ['nombre_subcategoria', 'codigo_categoria'];
+    
 
     public function categoria()
     {
