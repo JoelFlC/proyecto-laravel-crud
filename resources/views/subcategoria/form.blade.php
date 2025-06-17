@@ -30,6 +30,8 @@
       @method('PUT')
     @endif
 
+    <input type="hidden" name="origen" value="{{ $origen ?? 'general' }}">
+
     <div class="mb-3">
       <label for="nombre_subcategoria" class="form-label">Nombre</label>
       <input type="text"
@@ -46,7 +48,7 @@
         <option value="">-- Selecciona categoría --</option>
         @foreach($categorias as $cat)
           <option value="{{ $cat->codigo_categoria }}"
-            {{ (old('codigo_categoria', $subcategoria->codigo_categoria ?? '') == $cat->codigo_categoria) ? 'selected' : '' }}>
+            {{ (old('codigo_categoria', $subcategoria->codigo_categoria ?? $codigo_categoria ?? '') == $cat->codigo_categoria) ? 'selected' : '' }}>
             {{ $cat->nombre_categoria }}
           </option>
         @endforeach
@@ -56,7 +58,11 @@
     <button type="submit" class="btn btn-outline-info">
       {{ isset($subcategoria) ? 'Actualizar' : 'Guardar' }}
     </button>
-    <a href="{{ route('subcategoria.index') }}" class="btn btn-outline-light">Cancelar</a>
+
+    <a href="{{ ($origen ?? 'general') === 'general'
+               ? route('subcategoria.index')
+               : route('subcategoria.filtrar', $origen) }}"
+       class="btn btn-outline-light">Cancelar</a>
   </form>
 
   <script>
